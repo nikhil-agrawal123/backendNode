@@ -30,7 +30,7 @@ app.use(cors({
 
 // CORS configuration
 app.use(cors({
-    origin: [],
+    origin: ['*'],
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type']
 }));
