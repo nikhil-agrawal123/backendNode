@@ -70,6 +70,24 @@ const bookAppointment = async (req, res) => {
             });
         }
 
+        // Check if patient already has an appointment at this time
+        const existingPatientAppointment = await Appointment.findOne({
+            patientId,
+            appointmentDate: {
+                $gte: new Date(appointmentDate).setHours(0, 0, 0, 0),
+                $lt: new Date(appointmentDate).setHours(23, 59, 59, 999)
+            },
+            timeSlot,
+            status: { $in: ['scheduled', 'ongoing', 'confirmed'] }
+        });
+
+        if (existingPatientAppointment) {
+            return res.status(400).json({
+                error: 'Conflicting appointment',
+                message: 'You already have another appointment scheduled at this time'
+            });
+        }
+
         // Create appointment
         const appointment = new Appointment({
             doctorId,

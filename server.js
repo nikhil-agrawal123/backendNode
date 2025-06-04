@@ -14,21 +14,7 @@ const appointmentRoutes = require('./routes/appointments');
 
 const app = express();
 
-// Connect to MongoDB
 connectDB();
-
-// Middleware
-// Update the CORS configuration to match your frontend structure
-/*
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:8080',
-    credentials: true,
-    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization', 'Accept'],
-    exposedHeaders: ['set-cookie']
-}));*/
-
-// CORS configuration
 app.use(cors());
 
 app.use(express.json());
@@ -47,21 +33,6 @@ app.use(session({
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
-/*
-// Session configuration
-app.use(session({
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-      httpOnly: true,
-      sameSite: 'lax', // Try 'lax' instead of 'strict'
-      secure: process.env.NODE_ENV === 'production',
-      maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-  }));
-*/
-// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/patients', patientRoutes);
@@ -94,6 +65,5 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`🚀 Healthcare server running on port ${PORT}`);
-    // console.log(`📱 Frontend URL: ${process.env.FRONTEND_URL}`);
     console.log(`🏥 API Base URL: http://localhost:${PORT}/api`);
 });
