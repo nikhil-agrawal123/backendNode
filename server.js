@@ -30,8 +30,7 @@ app.use(cors({
 
 // CORS configuration
 app.use(cors({
-    origin: 'http://localhost:8080', // Your frontend URL
-    credentials: true,
+    origin: '*',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     allowedHeaders: ['Content-Type']
 }));
