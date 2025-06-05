@@ -16,7 +16,7 @@ const app = express();
 
 connectDB();
 app.use(cors({
-    origin: 'https://health-chat-nexus.vercel.app',
+    origin:[ 'https://health-chat-nexus.vercel.app','http://localhost:8080/'],
     credentials: true
 }));
 
