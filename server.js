@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const session = require('express-session');
 require('dotenv').config();
 
 // Import configurations
@@ -16,14 +17,25 @@ const app = express();
 connectDB();
 app.use(cors({
     origin: 'https://health-chat-nexus.vercel.app',
-    credentials: true, // REMOVE this line
+    credentials: true
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// REMOVE session configuration
-
+// Session configuration
+app.use(session({
+    name: 'healthcare.sid',
+    secret: process.env.SESSION_SECRET || 'your-secret-key',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // true on Render
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site
+        maxAge: 24 * 60 * 60 * 1000 // 24 hours
+    }
+}));
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/patients', patientRoutes);

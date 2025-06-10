@@ -6,19 +6,20 @@ const { validationResult } = require('express-validator');
 // Get patient profile
 const getPatientProfile = async (req, res) => {
     try {
-        const patientId = req.params.patientId;
-        const patient = await Patient.findById(patientId);
+        const patient = await Patient.findById(req.user.id);
         if (!patient) {
             return res.status(404).json({
                 error: 'Patient not found',
                 message: 'Patient profile not found'
             });
         }
+        console.log('Patient profile retrieved:', patient);
         res.json({
             success: true,
             patient
         });
     } catch (error) {
+        console.error('Get patient profile error:', error);
         res.status(500).json({
             error: 'Failed to get profile',
             message: error.message
@@ -36,7 +37,7 @@ const updatePatientProfile = async (req, res) => {
                 details: errors.array()
             });
         }
-        const patientId = req.params.patientId;
+
         const allowedUpdates = [
             'name', 'phone', 'age', 'gender', 'bloodGroup',
             'medicalHistory', 'allergies', 'currentMedications',
@@ -51,7 +52,7 @@ const updatePatientProfile = async (req, res) => {
         });
 
         const patient = await Patient.findByIdAndUpdate(
-            patientId,
+            req.user.id,
             updates,
             { new: true, runValidators: true }
         );
@@ -70,6 +71,7 @@ const updatePatientProfile = async (req, res) => {
         });
 
     } catch (error) {
+        console.error('Update patient profile error:', error);
         res.status(500).json({
             error: 'Failed to update profile',
             message: error.message
@@ -80,10 +82,9 @@ const updatePatientProfile = async (req, res) => {
 // Get patient's appointments
 const getPatientAppointments = async (req, res) => {
     try {
-        const patientId = req.params.patientId;
         const { status, page = 1, limit = 10 } = req.query;
         
-        const query = { patientId };
+        const query = { patientId: req.user.id };
         if (status) {
             query.status = status;
         }
@@ -108,6 +109,7 @@ const getPatientAppointments = async (req, res) => {
         });
 
     } catch (error) {
+        console.error('Get patient appointments error:', error);
         res.status(500).json({
             error: 'Failed to get appointments',
             message: error.message
@@ -118,7 +120,7 @@ const getPatientAppointments = async (req, res) => {
 // Get patient dashboard data
 const getPatientDashboard = async (req, res) => {
     try {
-        const patientId = req.params.patientId;
+        const patientId = req.user.id;
 
         // Get patient info
         const patient = await Patient.findById(patientId);

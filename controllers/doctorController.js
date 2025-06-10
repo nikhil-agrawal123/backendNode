@@ -2,11 +2,10 @@ const Doctor = require('../models/Doctor');
 const Appointment = require('../models/Appointment');
 const { validationResult } = require('express-validator');
 
-// Get doctor profile (public, by doctorId param)
+// Get doctor profile
 const getDoctorProfile = async (req, res) => {
     try {
-        const doctorId = req.params.doctorId;
-        const doctor = await Doctor.findById(doctorId);
+        const doctor = await Doctor.findById(req.user.id);
         if (!doctor) {
             return res.status(404).json({
                 error: 'Doctor not found',
@@ -27,7 +26,7 @@ const getDoctorProfile = async (req, res) => {
     }
 };
 
-// Update doctor profile (public, by doctorId param)
+// Update doctor profile
 const updateDoctorProfile = async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -38,7 +37,6 @@ const updateDoctorProfile = async (req, res) => {
             });
         }
 
-        const doctorId = req.params.doctorId;
         const allowedUpdates = [
             'name', 'phone', 'specialization', 'experience', 
             'qualifications', 'age', 'gender', 'consultationFee', 
@@ -53,7 +51,7 @@ const updateDoctorProfile = async (req, res) => {
         });
 
         const doctor = await Doctor.findByIdAndUpdate(
-            doctorId,
+            req.user.id,
             updates,
             { new: true, runValidators: true }
         );
@@ -118,13 +116,12 @@ const getAllDoctors = async (req, res) => {
     }
 };
 
-// Get doctor's appointments (by doctorId param)
+// Get doctor's appointments
 const getDoctorAppointments = async (req, res) => {
     try {
-        const doctorId = req.params.doctorId;
         const { status, page = 1, limit = 10 } = req.query;
         
-        const query = { doctorId };
+        const query = { doctorId: req.user.id };
         if (status) {
             query.status = status;
         }
@@ -157,10 +154,10 @@ const getDoctorAppointments = async (req, res) => {
     }
 };
 
-// Get doctor dashboard data (by doctorId param)
+// Get doctor dashboard data
 const getDoctorDashboard = async (req, res) => {
     try {
-        const doctorId = req.params.doctorId;
+        const doctorId = req.user.id;
 
         // Get doctor info
         const doctor = await Doctor.findById(doctorId);
@@ -213,11 +210,11 @@ const getDoctorDashboard = async (req, res) => {
     }
 };
 
-// Get available time slots for a specific date (by doctorId param)
+// Get available time slots for a specific date
 const getAvailableSlots = async (req, res) => {
     try {
         const { date } = req.query;
-        const doctorId = req.params.doctorId;
+        const doctorId = req.user.id;
 
         if (!date) {
             return res.status(400).json({
