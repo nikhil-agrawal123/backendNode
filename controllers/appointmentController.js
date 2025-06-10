@@ -434,7 +434,7 @@ module.exports = {
     getDoctorAppointments,
     // getAllDoctors,
     // getDoctorById,
-    getAvailableSlots,
-    updateAppointmentStatus,
-    rescheduleAppointment
+    // getAvailableSlots,
+    // updateAppointmentStatus,
+    // rescheduleAppointment
 };
