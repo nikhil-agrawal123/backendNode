@@ -67,12 +67,12 @@ const queryValidation = [
 ];
 
 // Appointment routes
-router.post('/', requirePatient, bookAppointmentValidation, bookAppointment);
-router.get('/stats', requireAuth, getAppointmentStats);
-router.get('/:appointmentId', requireAuth, appointmentIdValidation, getAppointment);
-router.put('/:appointmentId', requireAuth, appointmentIdValidation, updateAppointment);
-router.delete('/:appointmentId', requireAuth, appointmentIdValidation, cancelAppointment);
-router.post('/:appointmentId/rate', requirePatient, appointmentIdValidation, ratingValidation, rateAppointment);
+router.post('/', bookAppointmentValidation, bookAppointment);
+router.get('/stats', getAppointmentStats);
+router.get('/:appointmentId', appointmentIdValidation, getAppointment);
+router.put('/:appointmentId', appointmentIdValidation, updateAppointment);
+router.delete('/:appointmentId', appointmentIdValidation, cancelAppointment);
+router.post('/:appointmentId/rate', appointmentIdValidation, ratingValidation, rateAppointment);
 
 // Health check for appointment routes
 router.get('/health', (req, res) => {
@@ -84,16 +84,16 @@ router.get('/health', (req, res) => {
 });
 
 // Add these routes after your existing ones
-router.put('/:id/status', requireDoctor, (req, res) => {
+router.put('/:id/status',  (req, res) => {
     appointmentController.updateAppointmentStatus(req, res);
 });
 
-router.put('/:id/reschedule', requireAuth, (req, res) => {
+router.put('/:id/reschedule', (req, res) => {
     appointmentController.rescheduleAppointment(req, res);
 });
 
 // Add this route for video call integration
-router.get('/:appointmentId/video', requireAuth, appointmentIdValidation, (req, res) => {
+router.get('/:appointmentId/video', appointmentIdValidation, (req, res) => {
     const { appointmentId } = req.params;
     const meetingConfig = {
         roomName: `HealthChat-${appointmentId}`,

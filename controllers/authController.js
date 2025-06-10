@@ -5,7 +5,6 @@ const { validationResult } = require('express-validator');
 // Doctor Registration
 const registerDoctor = async (req, res) => {
     try {
-        // Check for validation errors
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
             return res.status(400).json({
@@ -54,14 +53,6 @@ const registerDoctor = async (req, res) => {
 
         await doctor.save();
 
-        // Create session
-        req.session.user = {
-            id: doctor._id,
-            email: doctor.email,
-            name: doctor.name,
-            role: 'doctor'
-        };
-
         res.status(201).json({
             success: true,
             message: 'Doctor registered successfully',
@@ -83,7 +74,7 @@ const registerDoctor = async (req, res) => {
     }
 };
 
-// Doctor Login
+// Doctor Login (stateless, returns user info if credentials are valid)
 const loginDoctor = async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -114,34 +105,16 @@ const loginDoctor = async (req, res) => {
             });
         }
 
-        // Create session
-        req.session.user = {
-            id: doctor._id,
-            email: doctor.email,
-            name: doctor.name,
-            role: 'doctor'
-        };
-
-        req.session.save(err => {
-            if (err) {
-                console.error("Session save error:", err);
-                return res.status(500).json({
-                    error: 'Login failed',
-                    message: 'Failed to create session'
-                });
+        res.json({
+            success: true,
+            message: 'Login successful',
+            user: {
+                id: doctor._id,
+                name: doctor.name,
+                email: doctor.email,
+                specialization: doctor.specialization,
+                role: 'doctor'
             }
-            console.log("DOCTOR SESSION SAVED:", req.session);
-            res.json({
-                success: true,
-                message: 'Login successful',
-                user: {
-                    id: doctor._id,
-                    name: doctor.name,
-                    email: doctor.email,
-                    specialization: doctor.specialization,
-                    role: 'doctor'
-                }
-            });
         });
 
     } catch (error) {
@@ -174,8 +147,8 @@ const registerPatient = async (req, res) => {
             bloodGroup,
             allergies,
             emergencyContact,
-            medicalHistory: medicalHistory, // Add this line
-            currentMedications: currentMedications, // Add this line
+            medicalHistory,
+            currentMedications,
         } = req.body;
 
         // Check if patient already exists
@@ -198,19 +171,11 @@ const registerPatient = async (req, res) => {
             bloodGroup: bloodGroup || '',
             allergies: allergies || [],
             emergencyContact: emergencyContact || {},
-            medicalHistory: medicalHistory || [], // Add this line
-            currentMedications: currentMedications || [] // Add this line
+            medicalHistory: medicalHistory || [],
+            currentMedications: currentMedications || []
         });
 
         await patient.save();
-
-        // Create session
-        req.session.user = {
-            id: patient._id,
-            email: patient.email,
-            name: patient.name,
-            role: 'patient'
-        };
 
         res.status(201).json({
             success: true,
@@ -233,7 +198,7 @@ const registerPatient = async (req, res) => {
     }
 };
 
-// Patient Login
+// Patient Login (stateless, returns user info if credentials are valid)
 const loginPatient = async (req, res) => {
     try {
         const errors = validationResult(req);
@@ -264,35 +229,16 @@ const loginPatient = async (req, res) => {
             });
         }
 
-        // Create session
-        req.session.user = {
-            id: patient._id,
-            email: patient.email,
-            name: patient.name,
-            role: 'patient'
-        };
-
-        // ADD THIS: Force session save before responding
-        req.session.save(err => {
-            if (err) {
-                console.error("Session save error:", err);
-                return res.status(500).json({
-                    error: 'Login failed',
-                    message: 'Failed to create session'
-                });
+        res.json({
+            success: true,
+            message: 'Login successful',
+            user: {
+                id: patient._id,
+                name: patient.name,
+                email: patient.email,
+                age: patient.age,
+                role: 'patient'
             }
-            console.log("SESSION SAVED SUCCESSFULLY:", req.session);
-            res.json({
-                success: true,
-                message: 'Login successful',
-                user: {
-                    id: patient._id,
-                    name: patient.name,
-                    email: patient.email,
-                    age: patient.age,
-                    role: 'patient'
-                }
-            });
         });
 
     } catch (error) {
@@ -304,65 +250,20 @@ const loginPatient = async (req, res) => {
     }
 };
 
-// Logout
+// Logout (stateless, just returns success)
 const logout = (req, res) => {
-    req.session.destroy((err) => {
-        if (err) {
-            return res.status(500).json({
-                error: 'Logout failed',
-                message: 'Could not log out, please try again'
-            });
-        }
-        
-        res.clearCookie('healthcare.sid');
-        res.json({
-            success: true,
-            message: 'Logged out successfully'
-        });
+    res.json({
+        success: true,
+        message: 'Logged out successfully'
     });
 };
 
-// Get current user
+// Get current user (stateless version: not supported)
 const getCurrentUser = async (req, res) => {
-    try {
-        if (!req.session.user) {
-            return res.status(401).json({
-                error: 'Not authenticated',
-                message: 'Please login first'
-            });
-        }
-
-        const { id, role } = req.session.user;
-        let user;
-
-        if (role === 'doctor') {
-            user = await Doctor.findById(id);
-        } else if (role === 'patient') {
-            user = await Patient.findById(id);
-        }
-
-        if (!user) {
-            return res.status(404).json({
-                error: 'User not found',
-                message: 'User account no longer exists'
-            });
-        }
-
-        res.json({
-            success: true,
-            user: {
-                ...user.toJSON(),
-                role
-            }
-        });
-
-    } catch (error) {
-        console.error('Get current user error:', error);
-        res.status(500).json({
-            error: 'Failed to get user',
-            message: error.message
-        });
-    }
+    res.status(400).json({
+        error: 'Not supported',
+        message: 'Stateless API does not support session-based current user'
+    });
 };
 
 module.exports = {

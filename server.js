@@ -1,6 +1,5 @@
 const express = require('express');
 const cors = require('cors');
-const session = require('express-session');
 require('dotenv').config();
 
 // Import configurations
@@ -16,26 +15,15 @@ const app = express();
 
 connectDB();
 app.use(cors({
-    origin: 'https://health-chat-nexus.vercel.app',
-    credentials: true
+    origin: 'https://health-chat-nexus.vercel.app'
+    // credentials: true, // REMOVE this line
 }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Session configuration
-app.use(session({
-    name: 'healthcare.sid',
-    secret: process.env.SESSION_SECRET || 'your-secret-key',
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: false, // Set to true in production with HTTPS
-        sameSite: 'lax',
-        maxAge: 24 * 60 * 60 * 1000 // 24 hours
-    }
-}));
+// REMOVE session configuration
+
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/patients', patientRoutes);
@@ -55,7 +43,7 @@ app.use((err, req, res, next) => {
     console.error(err.stack);
     res.status(500).json({ 
         error: 'Something went wrong!',
-        message: process.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
+        message: import.meta.env.NODE_ENV === 'development' ? err.message : 'Internal server error'
     });
 });
 
@@ -64,7 +52,7 @@ app.use('*', (req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = import.meta.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`🚀 Healthcare server running on port ${PORT}`);

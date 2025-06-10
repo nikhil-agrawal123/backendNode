@@ -57,30 +57,22 @@ const queryValidation = [
 ];
 
 // Doctor-specific routes (require doctor authentication)
-router.get('/profile', requireDoctor, getDoctorProfile);
-router.put('/profile', requireDoctor, updateProfileValidation, updateDoctorProfile);
-router.get('/appointments', requireDoctor, queryValidation, getDoctorAppointments);
-router.get('/dashboard', requireDoctor, getDoctorDashboard);
-router.get('/available-slots', requireDoctor, getAvailableSlots);
-
+router.get('/profile', getDoctorProfile);
+router.put('/profile', updateProfileValidation, updateDoctorProfile);
+router.get('/appointments', queryValidation, getDoctorAppointments);
+router.get('/dashboard', getDoctorDashboard);
+router.get('/available-slots', getAvailableSlots);
 
 router.get('/:id/available-slots', (req, res) => {
     appointmentController.getAvailableSlots(req, res);
 });
-
-
 router.get('/:id', (req, res) => {
     appointmentController.getDoctorById(req, res);
 });
 
-
-// Add these routes before any authenticated routes
 router.get('/', (req, res) => {
     appointmentController.getAllDoctors(req, res);
 });
-
-// Public routes (accessible by patients and doctors)
-router.get('/', requireAuth, queryValidation, getAllDoctors);
 
 // Health check for doctor routes
 router.get('/health', (req, res) => {

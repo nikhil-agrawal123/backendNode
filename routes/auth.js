@@ -88,7 +88,7 @@ router.post('/patient/login', loginValidation, loginPatient);
 
 // Common routes
 router.post('/logout', logout);
-router.get('/me', requireAuth, getCurrentUser);
+router.get('/me',  getCurrentUser);
 
 // Health check for auth routes
 router.get('/health', (req, res) => {

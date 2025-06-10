@@ -67,14 +67,14 @@ const doctorIdValidation = [
 ];
 
 // Patient-specific routes (require patient authentication)
-router.get('/profile', requirePatient, getPatientProfile);
-router.put('/profile', requirePatient, updateProfileValidation, updatePatientProfile);
-router.get('/appointments', requirePatient, queryValidation, getPatientAppointments);
-router.get('/dashboard', requirePatient, getPatientDashboard);
+router.get('/profile', getPatientProfile);
+router.put('/profile', updateProfileValidation, updatePatientProfile);
+router.get('/appointments', queryValidation, getPatientAppointments);
+router.get('/dashboard', getPatientDashboard);
 
 // Doctor search and details (accessible by patients)
-router.get('/doctors/search', requirePatient, searchValidation, searchDoctors);
-router.get('/doctors/:doctorId', requirePatient, doctorIdValidation, getDoctorDetails);
+router.get('/doctors/search', searchValidation, searchDoctors);
+router.get('/doctors/:doctorId', doctorIdValidation, getDoctorDetails);
 
 // Health check for patient routes
 router.get('/health', (req, res) => {
