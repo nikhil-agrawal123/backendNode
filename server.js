@@ -15,8 +15,8 @@ const app = express();
 
 connectDB();
 app.use(cors({
-    origin: 'https://health-chat-nexus.vercel.app'
-    // credentials: true, // REMOVE this line
+    origin: 'https://health-chat-nexus.vercel.app',
+    credentials: true, // REMOVE this line
 }));
 
 app.use(express.json());
