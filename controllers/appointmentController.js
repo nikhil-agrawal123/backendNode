@@ -433,7 +433,7 @@ module.exports = {
     getAppointmentStats,
     getDoctorAppointments,
     // getAllDoctors,
-    getDoctorById,
+    // getDoctorById,
     getAvailableSlots,
     updateAppointmentStatus,
     rescheduleAppointment
