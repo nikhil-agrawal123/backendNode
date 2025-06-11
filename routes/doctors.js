@@ -91,4 +91,6 @@ router.get('/health', (req, res) => {
     });
 });
 
+router.post('/appointments/:appointmentId/prescription', requireDoctor, appointmentController.addPrescription);
+
 module.exports = router;
