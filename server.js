@@ -15,7 +15,7 @@ const appointmentRoutes = require('./routes/appointments');
 const app = express();
 
 connectDB();
-res.cookie('token', token, {
+app.cookie('token', token, {
   httpOnly: true,
   secure: true,         // Required for cross-site cookies
   sameSite: 'none',     // Required for cross-site cookies
