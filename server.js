@@ -17,11 +17,6 @@ const app = express();
 const token = process.env.SESSION_SECRET
 
 connectDB();
-app.cookie('token', token, {
-  httpOnly: true,
-  secure: true,         // Required for cross-site cookies
-  sameSite: 'none',     // Required for cross-site cookies
-});
 
 app.use(cors({
     origin: ['https://health-chat-nexus.vercel.app', 'http://localhost:8080'],
