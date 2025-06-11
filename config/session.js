@@ -8,7 +8,8 @@ const sessionConfig = {
         secure: true,
         httpOnly: true,
         maxAge: 24 * 60 * 60 * 1000, // 24 hours
-        sameSite: "none"
+        sameSite: "none",
+        domain: process.env.NODE_ENV === 'production' ? 'health-chat-nexus.vercel.app' : "none" // Set domain for production
     },
     name: 'healthcare.sid'
 };
