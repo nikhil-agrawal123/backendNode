@@ -3,6 +3,7 @@ const Doctor = require('../models/Doctor');
 const Patient = require('../models/Patient');
 const { validationResult } = require('express-validator');
 const { sendAppointmentConfirmation } = require('../services/whatsappService');
+const mongoose = require('mongoose');
 
 // Book appointment
 const bookAppointment = async (req, res) => {
@@ -662,6 +663,55 @@ const rescheduleAppointment = async (req, res) => {
     }
 };
 
+const addPrescription = async (req, res) => {
+    try {
+        const { appointmentId } = req.params;
+        const { medications, instructions } = req.body;
+        
+        if (!mongoose.Types.ObjectId.isValid(appointmentId)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid appointment ID'
+            });
+        }
+        
+        // Use findByIdAndUpdate instead of findById+save to bypass validation
+        const result = await Appointment.findByIdAndUpdate(
+            appointmentId,
+            { 
+                prescription: {
+                    medications,
+                    instructions
+                }
+            },
+            { 
+                new: true,          // Return the updated document
+                runValidators: false // Skip validation to allow past dates
+            }
+        );
+        
+        if (!result) {
+            return res.status(404).json({
+                success: false,
+                message: 'Appointment not found'
+            });
+        }
+        
+        return res.status(200).json({
+            success: true,
+            message: 'Prescription added successfully',
+            prescription: result.prescription
+        });
+    } catch (error) {
+        console.error('Add prescription error:', error);
+        return res.status(500).json({
+            success: false,
+            message: 'Server error',
+            error: error.message
+        });
+    }
+};
+
 // Add these to the module.exports
 module.exports = {
     bookAppointment,
@@ -675,5 +725,6 @@ module.exports = {
     getDoctorById,
     getAvailableSlots,
     updateAppointmentStatus,
-    rescheduleAppointment
+    rescheduleAppointment,
+    addPrescription
 };
