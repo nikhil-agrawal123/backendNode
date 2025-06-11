@@ -34,11 +34,15 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', // true on Render
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site
+        secure: true,//process.env.NODE_ENV === 'production', // true on Render
+        sameSite: none,//process.env.NODE_ENV === 'production' ? 'none' : 'lax', // 'none' for cross-site
+        domain: undefined,
         maxAge: 24 * 60 * 60 * 1000 // 24 hours
     }
 }));
+
+app.set("trust proxy", 1);
+
 app.use('/api/auth', authRoutes);
 app.use('/api/doctors', doctorRoutes);
 app.use('/api/patients', patientRoutes);
