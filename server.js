@@ -14,6 +14,8 @@ const appointmentRoutes = require('./routes/appointments');
 
 const app = express();
 
+const token = process.env.SESSION_SECRET
+
 connectDB();
 app.cookie('token', token, {
   httpOnly: true,
