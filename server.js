@@ -15,6 +15,12 @@ const appointmentRoutes = require('./routes/appointments');
 const app = express();
 
 connectDB();
+res.cookie('token', token, {
+  httpOnly: true,
+  secure: true,         // Required for cross-site cookies
+  sameSite: 'none',     // Required for cross-site cookies
+});
+
 app.use(cors({
     origin: ['https://health-chat-nexus.vercel.app', 'http://localhost:8080'],
     credentials: true
