@@ -71,6 +71,10 @@ const appointmentSchema = new mongoose.Schema({
             maxlength: [500, 'Instructions cannot exceed 500 characters']
         }
     },
+    roomId: {
+    type: String,
+    trim: true,
+},
     meetingLink: {
         type: String,
         trim: true

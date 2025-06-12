@@ -21,7 +21,8 @@ const bookAppointment = async (req, res) => {
             appointmentDate,
             timeSlot,
             symptoms,
-            consultationType = 'video'
+            consultationType = 'video',
+            roomId
         } = req.body;
 
         const patientId = req.user.id;
@@ -97,7 +98,8 @@ const bookAppointment = async (req, res) => {
             timeSlot,
             symptoms,
             consultationType,
-            status: 'scheduled'
+            status: 'scheduled',
+            roomId
         });
 
         await appointment.save();
