@@ -97,8 +97,8 @@ router.get('/:appointmentId/video', requireAuth, appointmentIdValidation, (req, 
     const { appointmentId } = req.params;
     const meetingConfig = {
         roomName: `HealthChat-${appointmentId}`,
-        domain: 'meet.jit.si',
-        meetingLink: `https://meet.jit.si/HealthChat-${appointmentId}`
+        domain: 'health-chat-nexus.vercel.app',
+        meetingLink: `https://health-chat-nexus.vercel.app/video-conference/${appointmentId}`
     };
     
     res.json({

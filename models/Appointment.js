@@ -117,7 +117,7 @@ appointmentSchema.index({ status: 1 });
 appointmentSchema.pre('save', function(next) {
     if (this.isNew && !this.meetingLink) {
         this.meetingId = `HealthChat-${this._id}-${Date.now()}`;
-        this.meetingLink = `https://meet.jit.si/${this.meetingId}`;
+        this.meetingLink = `https://health-chat-nexus.vercel.app/video-conference/${this.meetingId}`;
     }
     next();
 });
