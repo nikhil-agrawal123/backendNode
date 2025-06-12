@@ -182,6 +182,8 @@ const getDoctorDashboard = async (req, res) => {
             .populate('patientId', 'name email phone')
             .sort({ appointmentDate: -1 })
             .limit(5);
+        
+        const uniquePatientCount = await Appointment.distinct('patientId', { doctorId }).length;
 
         res.json({
             success: true,
@@ -190,7 +192,7 @@ const getDoctorDashboard = async (req, res) => {
                     name: doctor.name,
                     specialization: doctor.specialization,
                     rating: doctor.rating,
-                    totalPatients: doctor.totalPatients
+                    totalPatients: uniquePatientCount
                 },
                 statistics: {
                     totalAppointments,
