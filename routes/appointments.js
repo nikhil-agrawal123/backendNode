@@ -96,9 +96,11 @@ router.put('/:id/reschedule', requireAuth, (req, res) => {
 router.get('/:appointmentId/video', requireAuth, appointmentIdValidation, (req, res) => {
     const { appointmentId } = req.params;
     const meetingConfig = {
-        roomName: `HealthChat-${appointmentId}`,
-        domain: 'meet.jit.si',
-        meetingLink: `https://meet.jit.si/HealthChat-${appointmentId}`
+        roomID: `HealthChat-${appointmentId}`,
+        // These are just configuration details - actual token generation happens client-side
+        appointmentId: appointmentId,
+        // The actual ZegoCloud URL
+        meetingLink: `/video-conference/${appointmentId}`
     };
     
     res.json({
