@@ -116,10 +116,8 @@ appointmentSchema.index({ status: 1 });
 // Generate meeting link before saving
 appointmentSchema.pre('save', function(next) {
     if (this.isNew && !this.meetingLink) {
-        // Generate a consistent room ID that both doctor and patient can use
-        this.meetingId = `HealthChat-${this._id}`;
-        // Use ZegoCloud link format instead of Jitsi
-        this.meetingLink = `/video-conference/${this._id}`;
+        this.meetingId = `HealthChat-${this._id}-${Date.now()}`;
+        this.meetingLink = `https://health-chat-nexus.vercel.app/video-conference/${this.meetingId}`;
     }
     next();
 });

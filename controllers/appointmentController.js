@@ -71,6 +71,18 @@ const bookAppointment = async (req, res) => {
             });
         }
 
+        const existingAppointments = await Appointment.findOne({
+                doctorId,
+                patientId
+            });
+
+            // Only increment totalPatients if it's a new patient
+            if (!existingAppointments) {
+                await Doctor.findByIdAndUpdate(doctorId, {
+                    $inc: { totalPatients: 1 }
+                });
+            }
+
         // Check if patient already has an appointment at this time
         const existingPatientAppointment = await Appointment.findOne({
             patientId,
@@ -124,10 +136,7 @@ const bookAppointment = async (req, res) => {
             // Don't fail the appointment booking if WhatsApp fails
         }
 
-        // Update doctor's total patients count
-        await Doctor.findByIdAndUpdate(doctorId, {
-            $inc: { totalPatients: 1 }
-        });
+        
 
         res.status(201).json({
             success: true,
